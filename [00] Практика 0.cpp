@@ -111,4 +111,5 @@ int main()
 		}
 	}
 	DrawTable(newrecords, g);
+
 }
