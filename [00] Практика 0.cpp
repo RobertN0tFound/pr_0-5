@@ -37,6 +37,9 @@ void printDate(unsigned short day, unsigned short month, unsigned short year, in
 		cout << "0" << month;
 	}
 	cout << ".";
+	if (year == 0) {
+		cout << "00" << year;
+	}
 	cout << year;
 	cout.width(len); cout << " ";
 }
@@ -77,6 +80,7 @@ int main()
 	char sDelete[15];
 	int g = 0;
 	int index;
+	int arinc;
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
 
@@ -89,6 +93,8 @@ int main()
 
 	cout << "Исходные данные:";
 	DrawTable(records, 3);
+
+	cout << endl << "Практическая работа № 1 (Удаление элемента структуры с определенным наименованием)";
 
 	cout << endl << endl << "Введите наименование, которое хотите удалить: ";
 	cin.getline(sDelete, 20);
@@ -112,5 +118,17 @@ int main()
 	}
 	DrawTable(newrecords, g);
 
+	cout << endl << "Практическая работа № 2 (Динамические массивы)";
+	 
+	struct Record* A;
+	cout << endl << endl << "Введите число записей, которое нужно добавить в массив A: ";
+	cin >> arinc;
+	A = (Record*)malloc(sizeof(Record) * arinc);
+	for (int i = 0; i < arinc; i++) {
+		A[i] = records[i];
+	}
+	DrawTable(A, arinc);
 
+	//struct Record* B;
+	
 }
