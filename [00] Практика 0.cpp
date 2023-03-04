@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <string>
 #include <algorithm>
+#include <iomanip>
 #define ARR_SIZE 20
 
 using namespace std;
@@ -170,10 +171,12 @@ int main()
 	cout << endl << "Адрес первого элемента B: " << &B[0];
 
 	cout << endl << endl << "Вывод таблицы адресов и строковых значений: ";
+	cout << endl << "+"; cout.width(66); cout.fill('-'); cout << "+"; cout.fill(' ');
 	for (int i = 0; i < max_i; i++) {
-		cout << endl << "| Адрес A[" << i << "]: " << &A[i] << " | Строкове поле A[" << i << "]: " << A[i].name;
-		cout << endl << "| Адрес B[" << i << "]: " << &B[i] << " | Строкове поле B[" << i << "]: " << B[i].name;
+		cout << endl << "| Адрес A[" << i << "] | " << &A[i] << " | Строкове поле A[" << i << "] | " << A[i].name << setw(20 - strlen(A[i].name)) << " |";
+		cout << endl << "| Адрес B[" << i << "] | " << &B[i] << " | Строкове поле B[" << i << "] | " << B[i].name << setw(20 - strlen(B[i].name)) << " |";
 	}
+	cout << endl << "+"; cout.width(66); cout.fill('-'); cout << "+"; cout.fill(' ');
 	free(A); delete[]B;
 	cout << endl << endl << "После освобождения памяти: ";
 	cout << endl << "Адрес первого элемента Records: " << &records[0];
