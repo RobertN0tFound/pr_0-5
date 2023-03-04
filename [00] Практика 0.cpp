@@ -1,6 +1,8 @@
 ﻿#include <iostream>
 #include <windows.h>
 #include <string>
+#include <algorithm>
+#define ARR_SIZE 20
 
 using namespace std;
 
@@ -75,21 +77,26 @@ void DrawTable(struct Record* records, int RowCount)
 	cout << internal; cout << "|"; cout.width(85); cout.fill('_'); cout << "|" << endl; cout.fill(' ');
 }
 
+bool isNumber(const string &s) {
+	return !s.empty() && all_of(s.begin(), s.end(), isdigit);
+}
+
 int main()
 {
 	char sDelete[15];
 	int g = 0;
 	int index;
 	int arinc;
+	char tmp[50];
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
 
-	struct Record records[20] = {
+	struct Record records[ARR_SIZE] = {
 		{ "Pentium-III", 233, 16, "C", {10,10,2020} },
 		{ "AMD-K6", 166, 8, "C", {11,11,2011} },
 		{ "PowerPC-620", 2000, 16, "R", {10,10,2010} }
 	};
-	struct Record newrecords[20];
+	struct Record newrecords[ARR_SIZE];
 
 	cout << "Исходные данные:";
 	DrawTable(records, 3);
@@ -121,14 +128,55 @@ int main()
 	cout << endl << "Практическая работа № 2 (Динамические массивы)";
 	 
 	struct Record* A;
-	cout << endl << endl << "Введите число записей, которое нужно добавить в массив A: ";
-	cin >> arinc;
+	while (1) {
+		cout << endl << endl << "Введите число записей, которое нужно добавить в массив A (1-" << ARR_SIZE << "): ";
+		cin >> tmp;
+		if (!isNumber(tmp)) {
+			arinc = 0;
+		}
+		else {
+			arinc = atoi(tmp);
+		}
+		if (arinc > ARR_SIZE || arinc < 1) {
+			cout << endl << "Ошибка. Введенное значение является недопустимым.";
+		}
+		else
+			break;
+	}
 	A = (Record*)malloc(sizeof(Record) * arinc);
 	for (int i = 0; i < arinc; i++) {
 		A[i] = records[i];
 	}
 	DrawTable(A, arinc);
 
-	//struct Record* B;
-	
+	struct Record* B;
+	int max_i;
+	if (arinc > 10)
+		max_i = 10;
+	else
+		max_i = arinc;
+	B = new Record[max_i];
+	for (int i = 0; i < max_i; i++) {
+		B[i] = A[i];
+	}
+	free(A);
+	A = (Record*)malloc(sizeof(Record)*max_i);
+	for (int i = 0; i < max_i; i++) {
+		A[i] = B[i];
+	}
+	cout << endl << endl << "Вывод адресов первых элементов массивов: ";
+	cout << endl << "Адрес первого элемента Records: " << &records[0];
+	cout << endl << "Адрес первого элемента A: " << &A[0];
+	cout << endl << "Адрес первого элемента B: " << &B[0];
+
+	cout << endl << endl << "Вывод таблицы адресов и строковых значений: ";
+	for (int i = 0; i < max_i; i++) {
+		cout << endl << "| Адрес A[" << i << "]: " << &A[i] << " | Строкове поле A[" << i << "]: " << A[i].name;
+		cout << endl << "| Адрес B[" << i << "]: " << &B[i] << " | Строкове поле B[" << i << "]: " << B[i].name;
+	}
+	free(A); delete[]B;
+	cout << endl << endl << "После освобождения памяти: ";
+	cout << endl << "Адрес первого элемента Records: " << &records[0];
+	cout << endl << "Адрес первого элемента A: " << &A[0];
+	cout << endl << "Адрес первого элемента B: " << &B[0];
 }
