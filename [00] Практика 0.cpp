@@ -3,9 +3,12 @@
 #include <string>
 #include <algorithm>
 #include <iomanip>
+#include <fstream>
 #define ARR_SIZE 20
 
 using namespace std;
+char FDB[20] = "Database.txt";
+char BDB[20] = "Database.bin";
 
 struct Date {
 	unsigned short day;
@@ -245,12 +248,15 @@ bool isNumber(const string& s) {
 
 int main()
 {
+	FILE* textFile;
+	FILE* binaryFile;
 	char sDelete[15];
 	int g = 0;
 	int arinc;
 	char artmp[50];
 	int max_i;
 	struct Record* tmp;
+	struct Record readRecords;
 
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
@@ -258,9 +264,16 @@ int main()
 	addItem("Pentium-III", 233, 16, "C", { 10,10,2020 });
 	addItem("AMD-K6", 166, 8, "C", { 11,11,2011 });
 	addItem("PowerPC-620", 2000, 16, "R", { 10,10,2010 });
-	insertAfterItem("PowerPC-620", "TEST #1", 233, 16, "C", { 10,10,2020 });
-	insertBeforeItem("Pentium-III", "TEST #2", 166, 8, "C", { 11,11,2011 });
-
+	fopen_s(&textFile, FDB, "w+t");
+	fopen_s(&binaryFile, BDB, "w+b");
+	tmp = headList;
+	while (tmp) {
+		fprintf_s(textFile, "%s %d %d %s %hd %hd %hd\n", tmp->name, tmp->freq, tmp->ram, tmp->type, tmp->date.day, tmp->date.month, tmp->date.year);
+		fwrite(tmp, sizeof(Record), 1, binaryFile);
+		tmp = tmp->next;
+	}
+	fclose(textFile);
+	fclose(binaryFile);
 	cout << "Исходные данные:";
 	DrawTable();
 
@@ -327,4 +340,43 @@ int main()
 	cout << endl << "Адрес первого элемента Records: " << &headList;
 	cout << endl << "Адрес первого элемента A: " << &A[0];
 	cout << endl << "Адрес первого элемента B: " << &B[0];
+
+	cout << endl << endl << "Практическая работа № 4 (Работа с файлами)";
+
+	fopen_s(&textFile, FDB, "rt");
+	fopen_s(&binaryFile, BDB, "rb");
+	char temp[20];
+	while (!feof(textFile)) {
+		fscanf_s(textFile, "%s", readRecords.name, _countof(readRecords.name));
+		fscanf_s(textFile, "%d", &readRecords.freq);
+		fscanf_s(textFile, "%d", &readRecords.ram);
+		fscanf_s(textFile, "%s", readRecords.type, _countof(readRecords.type));
+		fscanf_s(textFile, "%hd", &readRecords.date.day);
+		fscanf_s(textFile, "%hd", &readRecords.date.month);
+		fscanf_s(textFile, "%hd\n", &readRecords.date.year);
+
+		snprintf(temp, 20, "%s-t", readRecords.name);
+		addItem(
+			temp,
+			readRecords.freq,
+			readRecords.ram,
+			readRecords.type,
+			{ readRecords.date.day,
+			readRecords.date.month,
+			readRecords.date.year });
+		
+		fread(&readRecords, sizeof(Record), 1, binaryFile);
+		snprintf(temp, 20, "%s-b", readRecords.name);
+		addItem(
+			temp,
+			readRecords.freq,
+			readRecords.ram,
+			readRecords.type,
+			{ readRecords.date.day,
+			readRecords.date.month,
+			readRecords.date.year });
+	}
+	fclose(textFile);
+	fclose(binaryFile);
+	DrawTable();
 }
